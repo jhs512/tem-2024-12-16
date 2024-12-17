@@ -7,7 +7,10 @@ import lombok.Getter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/posts")
@@ -47,10 +50,8 @@ public class PostController {
     @PostMapping("/write")
     @ResponseBody
     public String write(
-            @ModelAttribute @Valid PostWriteForm form
+            @Valid PostWriteForm form
     ) {
-        System.out.println("form = " + form);
-
         return """
                 <h1>글쓰기 완료</h1>
                 
