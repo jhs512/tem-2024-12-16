@@ -4,7 +4,6 @@ import com.ll.tem.domain.post.post.entity.Post;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,19 +41,6 @@ public class PostController {
         );
     }};
 
-    private String getFormHtml(String errorMessage, String title, String content) {
-        return """
-                <div>%s</div>
-                <form method="POST">
-                    <input type="text" name="title" placeholder="제목" value="%s">
-                    <br>
-                    <textarea name="content" placeholder="내용">%s</textarea>
-                    <br>
-                    <button type="submit">글쓰기</button>
-                </form>
-                """.formatted(errorMessage, title, content);
-    }
-
     @GetMapping
     @ResponseBody
     public String showList() {
@@ -91,23 +77,12 @@ public class PostController {
     }
 
     @PostMapping("/write")
-    public ResponseEntity<String> write(
+    public String write(
             @Valid PostWriteForm form,
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            String errorMessages = bindingResult.getAllErrors()
-                    .stream()
-                    .map(error -> error.getDefaultMessage())
-                    .sorted()
-                    .map(message -> message.split("-", 2)[1])
-                    .collect(Collectors.joining("<br>"));
-
-            return ResponseEntity
-                    .badRequest() // 400(Bad Request, 고객 잘못으로 인해 실패)
-                    .body(
-                            getFormHtml(errorMessages, form.title, form.content)
-                    );
+            return "domain/post/post/write";
         }
 
         posts.add(
@@ -117,9 +92,6 @@ public class PostController {
                         .build()
         );
 
-        return ResponseEntity
-                .status(302) // 다른 곳으로 즉시 이동하시오.
-                .header("Location", "/posts")
-                .build();
+        return "redirect:/posts";
     }
 }
